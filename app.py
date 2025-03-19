@@ -1,16 +1,11 @@
+"""This is the main Flask application for the Mars Mission project.
+It provides CRUD operations to manage resources in the database."""
 import sys
 import os
-from flask import Flask, request, jsonify  # Import the missing request and jsonify
+from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-# Module docstring explaining the purpose of the file
-"""
-This file defines a Flask application with CRUD operations to manage resources in a database.
-The app allows adding, viewing, updating, and deleting resources.
-"""
-
 # Create and configure the Flask app
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///resources.db'
@@ -107,5 +102,3 @@ def delete_resource(resource_id):
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-# Ensure final newline here
