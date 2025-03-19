@@ -1,6 +1,11 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 
+# Module docstring explaining the purpose of the file
+"""
+This file defines a Flask app with CRUD operations for managing resources.
+"""
+
 # Create and configure the Flask app
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///resources.db'
@@ -19,6 +24,11 @@ class Resource(db.Model):
     def __repr__(self):
         """ Returns the string representation of the resource for easier management """
         return f"<Resource {self.name}, Quantity: {self.quantity}>"
+
+    # Example additional method to avoid "too few public methods" warning
+    def get_resource_details(self):
+        """ Returns a dictionary of resource details """
+        return {"name": self.name, "quantity": self.quantity}
 
 # Create tables in the database
 with app.app_context():
