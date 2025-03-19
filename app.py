@@ -1,6 +1,6 @@
 import sys
 import os
-from flask import Flask, request, jsonify
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -20,7 +20,7 @@ db = SQLAlchemy(app)
 # Database Model
 class Resource(db.Model):
     """
-    Represents a resource in the database with attributes like name and quantity.
+    Represents a resource in the database.
     """
     resource_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
@@ -46,9 +46,9 @@ with app.app_context():
 @app.route("/")
 def home():
     """
-    Home route to check if the Flask app is running.
+    A simple test route to check if the app is working.
     """
-    return "Mars Mission Application Running!"
+    return "Hello, Mars Mission!"
 
 # CREATE - Add a new resource
 @app.route('/resources', methods=['POST'])
