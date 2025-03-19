@@ -1,6 +1,6 @@
 import sys
 import os
-from flask import Flask
+from flask import Flask, request, jsonify  # Import the missing request and jsonify
 from flask_sqlalchemy import SQLAlchemy
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -20,7 +20,7 @@ db = SQLAlchemy(app)
 # Database Model
 class Resource(db.Model):
     """
-    Represents a resource in the database.
+    Represents a resource in the database with attributes like name and quantity.
     """
     resource_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
@@ -46,9 +46,9 @@ with app.app_context():
 @app.route("/")
 def home():
     """
-    A simple test route to check if the app is working.
+    Home route to check if the Flask app is running.
     """
-    return "Hello, Mars Mission!"
+    return "Mars Mission Application Running!"
 
 # CREATE - Add a new resource
 @app.route('/resources', methods=['POST'])
@@ -107,3 +107,5 @@ def delete_resource(resource_id):
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+# Add final newline here
