@@ -1,14 +1,18 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 
-app = Flask(__name__)  # ✅ Το app ορίζεται μόνο μία φορά
+# Flask app
+app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///resources.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 # Database Model
 class Resource(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    """
+    Κλάση που αναπαριστά τους πόρους στην βάση δεδομένων.
+    """
+    resource_id = db.Column(db.Integer, primary_key=True)  # Αλλαγή από 'id' σε 'resource_id'
     name = db.Column(db.String(100), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
 
@@ -19,11 +23,17 @@ with app.app_context():
 # Home route (test)
 @app.route("/")
 def home():
+    """
+    Απλή διαδρομή που επιστρέφει ένα μήνυμα καλωσορίσματος.
+    """
     return "Hello, Mars Mission!"
 
 # CREATE - Add a new resource
 @app.route('/resources', methods=['POST'])
 def add_resource():
+    """
+    Προσθέτει έναν νέο πόρο στην βάση δεδομένων.
+    """
     data = request.json
     new_resource = Resource(name=data['name'], quantity=data['quantity'])
     db.session.add(new_resource)
@@ -33,14 +43,20 @@ def add_resource():
 # READ - Get all resources
 @app.route('/resources', methods=['GET'])
 def get_resources():
+    """
+    Επιστρέφει όλους τους πόρους από τη βάση δεδομένων.
+    """
     resources = Resource.query.all()
-    resource_list = [{"id": r.id, "name": r.name, "quantity": r.quantity} for r in resources]
+    resource_list = [{"resource_id": r.resource_id, "name": r.name, "quantity": r.quantity} for r in resources]
     return jsonify(resource_list)
 
 # UPDATE - Modify a resource
-@app.route('/resources/<int:id>', methods=['PUT'])
-def update_resource(id):
-    resource = Resource.query.get(id)
+@app.route('/resources/<int:resource_id>', methods=['PUT'])
+def update_resource(resource_id):
+    """
+    Τροποποιεί έναν πόρο με βάση το id του.
+    """
+    resource = Resource.query.get(resource_id)
     if not resource:
         return jsonify({"message": "Resource not found"}), 404
     data = request.json
@@ -50,9 +66,12 @@ def update_resource(id):
     return jsonify({"message": "Resource updated!"})
 
 # DELETE - Remove a resource
-@app.route('/resources/<int:id>', methods=['DELETE'])
-def delete_resource(id):
-    resource = Resource.query.get(id)
+@app.route('/resources/<int:resource_id>', methods=['DELETE'])
+def delete_resource(resource_id):
+    """
+    Διαγράφει έναν πόρο με βάση το id του.
+    """
+    resource = Resource.query.get(resource_id)
     if not resource:
         return jsonify({"message": "Resource not found"}), 404
     db.session.delete(resource)
@@ -61,4 +80,3 @@ def delete_resource(id):
 
 if __name__ == '__main__':
     app.run(debug=True)
-
