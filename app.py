@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 
-# Flask app
+# Create and configure the Flask app
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///resources.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -10,13 +10,17 @@ db = SQLAlchemy(app)
 # Database Model
 class Resource(db.Model):
     """
-    Κλάση που αναπαριστά τους πόρους στην βάση δεδομένων.
+    Class that represents resources in the database.
     """
-    resource_id = db.Column(db.Integer, primary_key=True)  # Αλλαγή από 'id' σε 'resource_id'
+    resource_id = db.Column(db.Integer, primary_key=True)  # Changed from 'id' to 'resource_id'
     name = db.Column(db.String(100), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
 
-# Create Database Tables
+    def __repr__(self):
+        """ Returns the string representation of the resource for easier management """
+        return f"<Resource {self.name}, Quantity: {self.quantity}>"
+
+# Create tables in the database
 with app.app_context():
     db.create_all()
 
@@ -24,7 +28,7 @@ with app.app_context():
 @app.route("/")
 def home():
     """
-    Απλή διαδρομή που επιστρέφει ένα μήνυμα καλωσορίσματος.
+    Simple route that returns a welcome message.
     """
     return "Hello, Mars Mission!"
 
@@ -32,7 +36,7 @@ def home():
 @app.route('/resources', methods=['POST'])
 def add_resource():
     """
-    Προσθέτει έναν νέο πόρο στην βάση δεδομένων.
+    Adds a new resource to the database.
     """
     data = request.json
     new_resource = Resource(name=data['name'], quantity=data['quantity'])
@@ -44,7 +48,7 @@ def add_resource():
 @app.route('/resources', methods=['GET'])
 def get_resources():
     """
-    Επιστρέφει όλους τους πόρους από τη βάση δεδομένων.
+    Returns all resources from the database.
     """
     resources = Resource.query.all()
     resource_list = [{"resource_id": r.resource_id, "name": r.name, "quantity": r.quantity} for r in resources]
@@ -54,7 +58,7 @@ def get_resources():
 @app.route('/resources/<int:resource_id>', methods=['PUT'])
 def update_resource(resource_id):
     """
-    Τροποποιεί έναν πόρο με βάση το id του.
+    Modifies a resource based on its id.
     """
     resource = Resource.query.get(resource_id)
     if not resource:
@@ -69,7 +73,7 @@ def update_resource(resource_id):
 @app.route('/resources/<int:resource_id>', methods=['DELETE'])
 def delete_resource(resource_id):
     """
-    Διαγράφει έναν πόρο με βάση το id του.
+    Deletes a resource based on its id.
     """
     resource = Resource.query.get(resource_id)
     if not resource:
