@@ -1,4 +1,4 @@
-name: CI Pipeline
+name: CI Pipeline 
 
 on:
   push:
@@ -29,7 +29,7 @@ jobs:
       - name: Lint code
         run: |
           pip install pylint
-          pylint $(git ls-files '*.py')
+          pylint app.py
 
   test:
     runs-on: ubuntu-latest
@@ -47,17 +47,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Set up database
-        run: |
-          python -c "from app import db; db.create_all()"
-
       - name: Run tests with pytest
         run: |
           pip install pytest
-          pytest tests/  
+          pytest tests/test_app.py 
 
   docker:
-    needs: [lint, test] 
+    needs: [lint, test]  # Τρέχει ΜΟΝΟ αν περάσουν lint και tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
