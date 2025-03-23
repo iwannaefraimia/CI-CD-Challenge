@@ -6,16 +6,14 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-# Create and configure the Flask app
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///resources.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-# Database Model
 class Resource(db.Model):
     """
-    Represents a resource in the database with attributes like name and quantity.
+    Represents a resource in the database with attributes like name and quantity
     """
     resource_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
@@ -33,11 +31,9 @@ class Resource(db.Model):
         """
         return {"name": self.name, "quantity": self.quantity}
 
-# Create tables in the database
 with app.app_context():
     db.create_all()
 
-# Home route
 @app.route("/")
 def home():
     """
@@ -45,7 +41,7 @@ def home():
     """
     return "Mars Mission Application Running!"
 
-# CREATE - Add a new resource
+# CREATE
 @app.route('/resources', methods=['POST'])
 def add_resource():
     """
@@ -58,7 +54,7 @@ def add_resource():
     db.session.commit()
     return jsonify({"message": "Resource added!"}), 201
 
-# READ - Get all resources
+# READ
 @app.route('/resources', methods=['GET'])
 def get_resources():
     """
@@ -71,7 +67,7 @@ def get_resources():
     ]
     return jsonify(resource_list)
 
-# UPDATE - Modify a resource
+# UPDATE
 @app.route('/resources/<int:resource_id>', methods=['PUT'])
 def update_resource(resource_id):
     """
@@ -87,7 +83,7 @@ def update_resource(resource_id):
     db.session.commit()
     return jsonify({"message": "Resource updated!"})
 
-# DELETE - Remove a resource
+# DELETE
 @app.route('/resources/<int:resource_id>', methods=['DELETE'])
 def delete_resource(resource_id):
     """
